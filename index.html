@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Open Deposit Modal</title>
+  <title>Open Deposit Modal - Simple</title>
   <style>
     body { font-family: Arial, sans-serif; display:flex; align-items:center; justify-content:center; height:100vh; margin:0; background:#f7f9fb; }
     .btn { padding:12px 18px; border-radius:8px; border:0; background:#1565ff; color:#fff; cursor:pointer; font-weight:600; }
@@ -12,38 +12,34 @@
 <body>
   <button id="openModalBtn" class="btn">Open Buyer Deposit</button>
 
-  <!-- Ensure real-estate-deposit-modal.js is in the same folder as this HTML file -->
+  <!-- Include the modal script (save real-estate-deposit-modal.js in same folder) -->
   <script src="real-estate-deposit-modal.js"></script>
 
   <script>
-    // Minimal wiring: create modal once and open when button clicked.
-    // If the external JS isn't found, user will be alerted.
+    // Attach the modal to the button. This handles creating and opening the modal.
+    // You can also call RealEstateDepositModal.create(...) and open() manually.
     (function () {
       const btn = document.getElementById('openModalBtn');
 
-      btn.addEventListener('click', function () {
-        if (!window.RealEstateDepositModal) {
-          alert('real-estate-deposit-modal.js not loaded. Make sure the file is next to this HTML or paste its code into the page.');
-          return;
+      // options with handlers
+      const options = {
+        onSubmit: async (data) => {
+          // In a real app you'd send data to backend or create a blockchain tx.
+          console.log('onSubmit payload:', data);
+          alert('Deposit submitted for ' + data.property + '\\nAmount: $' + data.amount + (data.wallet ? '\\nWallet: ' + data.wallet : '\\n(no wallet)'));
+          // simulate network latency
+          await new Promise(resolve => setTimeout(resolve, 600));
+        },
+        onConnect: (account) => {
+          console.log('Wallet connected:', account);
         }
+      };
 
-        // Create modal instance once and reuse
-        if (!window._red_modal_instance) {
-          window._red_modal_instance = RealEstateDepositModal.create({
-            onSubmit: function (data) {
-              console.log('Deposit submitted:', data);
-              alert('Submitted deposit for ' + data.property + ' — $' + data.amount);
-              // return a promise if you want to simulate async work:
-              return new Promise(resolve => setTimeout(resolve, 500));
-            },
-            onConnect: function (acct) {
-              console.log('Wallet connected:', acct);
-            }
-          });
-        }
+      // attach binds the modal to the button and returns the modal instance
+      const inst = RealEstateDepositModal.attach(btn, options);
 
-        window._red_modal_instance.open();
-      });
+      // Optional: if you need to open programmatically later:
+      // inst.open();
     })();
   </script>
 </body>
