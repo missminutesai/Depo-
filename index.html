@@ -10,6 +10,7 @@
     .note { margin-top:12px; font-size:13px; color:#334; text-align:center; }
     .wrap { text-align:center; }
   </style>
+    <script src="real-estate-deposit-modal.js"></script>
 </head>
 <body>
   <div class="wrap">
@@ -20,24 +21,6 @@
   <!-- Load the modal script (place the JS file next to this HTML) -->
   <script src="real-estate-deposit-modal.js"></script>
 
-  <script>
-    // Minimal wiring: create modal once and open when button clicked.
-    // If you don't have the external JS file, paste the modal script here instead.
-    document.getElementById('openBtn').addEventListener('click', function () {
-      if (!window.RealEstateDepositModal) {
-        alert('real-estate-deposit-modal.js not found. Save the JS file next to this HTML or paste its contents into this file.');
-        return;
-      }
-      // create a modal instance and open it
-      const modal = RealEstateDepositModal.create({
-        onSubmit: (data) => {
-          console.log('Submitted:', data);
-          alert('Submitted deposit for ' + data.property + ' — $' + data.amount);
-        },
-        onConnect: (acct) => console.log('Wallet connected:', acct)
-      });
-      modal.open();
-    });
-  </script>
+
 </body>
 </html>
