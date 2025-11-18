@@ -3,24 +3,48 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Simple Test - Open Deposit Modal</title>
+  <title>Open Deposit Modal</title>
   <style>
     body { font-family: Arial, sans-serif; display:flex; align-items:center; justify-content:center; height:100vh; margin:0; background:#f7f9fb; }
     .btn { padding:12px 18px; border-radius:8px; border:0; background:#1565ff; color:#fff; cursor:pointer; font-weight:600; }
-    .note { margin-top:12px; font-size:13px; color:#334; text-align:center; }
-    .wrap { text-align:center; }
   </style>
-    <script src="real-estate-deposit-modal.js"></script>
 </head>
 <body>
-  <div class="wrap">
-    <button id="openBtn" class="btn">Open Buyer Deposit</button>
-    <div class="note">Make sure <code>real-estate-deposit-modal.js</code> is in the same folder or paste its code above the demo script.</div>
-  </div>
+  <button id="openModalBtn" class="btn">Open Buyer Deposit</button>
 
-  <!-- Load the modal script (place the JS file next to this HTML) -->
+  <!-- Ensure real-estate-deposit-modal.js is in the same folder as this HTML file -->
   <script src="real-estate-deposit-modal.js"></script>
 
+  <script>
+    // Minimal wiring: create modal once and open when button clicked.
+    // If the external JS isn't found, user will be alerted.
+    (function () {
+      const btn = document.getElementById('openModalBtn');
 
+      btn.addEventListener('click', function () {
+        if (!window.RealEstateDepositModal) {
+          alert('real-estate-deposit-modal.js not loaded. Make sure the file is next to this HTML or paste its code into the page.');
+          return;
+        }
+
+        // Create modal instance once and reuse
+        if (!window._red_modal_instance) {
+          window._red_modal_instance = RealEstateDepositModal.create({
+            onSubmit: function (data) {
+              console.log('Deposit submitted:', data);
+              alert('Submitted deposit for ' + data.property + ' — $' + data.amount);
+              // return a promise if you want to simulate async work:
+              return new Promise(resolve => setTimeout(resolve, 500));
+            },
+            onConnect: function (acct) {
+              console.log('Wallet connected:', acct);
+            }
+          });
+        }
+
+        window._red_modal_instance.open();
+      });
+    })();
+  </script>
 </body>
 </html>
